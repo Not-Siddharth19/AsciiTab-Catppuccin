@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Tab</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <nav id="left-nav">
+        <div class="sidebar-header">
+            <span>NAV</span>
+            <button class="add-btn">+</button>
+        </div>
+        <div id="nav-content"></div>
+    </nav>
+
+    <main>
+
+        <div class="ascii-hero" id="ascii-art">( RING )</div>
+
+        <div id="clock"></div>
+        <div id="date"></div>
+
+        <div class="search-container">
+            <div class="search-box">
+                <input id="cmd" placeholder="Search or type @s" autocomplete="off" autocorrect="off"
+                    autocapitalize="off" spellcheck="false">
+            </div>
+            <div id="suggestions"></div>
+        </div>
+
+    </main>
+
+    <aside id="right-aside">
+        <div class="widget" id="timer-widget">
+            <div class="widget-title">TIMER <span id="timer-label">WORK</span></div>
+            <div class="timer-display" id="timer-display">25:00</div>
+            <div class="timer-btns">
+                <button class="mini-btn" id="timer-toggle">START</button>
+                <button class="mini-btn" id="reset-timer-btn">RESET</button>
+            </div>
+        </div>
+        <div class="widget" id="weather-widget">
+            <div class="widget-title">WEATHER</div>
+            <div class="weather-info">☀ 31°C <span style="font-size:0.75rem; opacity:0.6; margin-left: 8px;">Sunny</span></div>
+        </div>
+        <div class="widget" id="media-widget">
+            <div class="widget-title">
+                MEDIA
+                <button class="mini-btn" id="media-upload-trigger">📁</button>
+            </div>
+            <div class="media-info" id="media-track">♪ Select a file...</div>
+            <div class="media-controls">
+                <div class="progress-container">
+                    <span id="media-time-current">0:00</span>
+                    <input type="range" id="media-progress" class="media-slider" value="0" min="0" max="100">
+                    <span id="media-time-total">0:00</span>
+                </div>
+                <div class="timer-btns" style="justify-content: center;">
+                    <button class="mini-btn" id="media-play-pause" style="padding: 4px 16px;">⏯</button>
+                </div>
+            </div>
+            <input type="file" id="media-upload" accept="audio/*" style="display:none">
+            <audio id="local-audio" style="display:none"></audio>
+        </div>
+        <div class="widget" id="tasks-widget">
+            <div class="widget-title">tasks</div>
+            <div id="tasks" class="task-list"></div>
+            <input id="newTask" class="task-input" placeholder="+ task">
+        </div>
+        <div class="widget" id="notes-widget">
+            <div class="widget-title">notes</div>
+            <textarea id="memo"></textarea>
+        </div>
+        <div class="widget" id="visualizer-widget">
+            <div class="widget-title">VISUALIZER</div>
+            <div class="visualizer-container" id="visualizer-bars"></div>
+        </div>
+        <div class="widget" id="system-widget">
+            <div class="widget-title">SYS</div>
+            <div class="sys-text">
+                cpu: <span class="sys-val" id="sys-cpu">12%</span><br>
+                ram: <span class="sys-val" id="sys-ram">4.2gb</span><br>
+                upt: <span class="sys-val">04:20:11</span>
+            </div>
+        </div>
+    </aside>
+
+    <div class="backdrop" id="backdrop"></div>
+
+    <div class="modal" id="add-link-modal" style="width: 350px;">
+        <h4>+ Add Sidebar Link</h4>
+        <div class="modal-section">
+            <div class="modal-row">
+                <span>Category</span>
+                <select id="al-category" style="width: 150px; outline: none; border-radius: 4px; background: var(--surface1); color: var(--text); border: none; padding: 4px;"></select>
+            </div>
+            <div class="modal-row" id="new-cat-row" style="display: none;">
+                <span>New Name</span>
+                <input id="al-new-category" class="task-input" style="width: 150px; margin-top: 0;" placeholder="/category">
+            </div>
+            <div class="modal-row">
+                <span>Site Name</span>
+                <input id="al-name" class="task-input" style="width: 150px; margin-top: 0;" placeholder="Title">
+            </div>
+            <div class="modal-row">
+                <span>URL</span>
+                <input id="al-url" class="task-input" style="width: 150px; margin-top: 0;" placeholder="https://...">
+            </div>
+        </div>
+        <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+            <button id="add-link-cancel" class="mini-btn">Cancel</button>
+            <button id="add-link-save" class="mini-btn" style="background: var(--mauve); color: var(--text); font-weight: bold;">Save Link</button>
+        </div>
+    </div>
+
+    <div class="modal" id="help-modal" style="width: 450px; max-height: 80vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4>/help commands</h4>
+            <button class="mini-btn" id="open-cmd-mgr-btn">+ Add Command</button>
+        </div>
+        <div id="help-content"></div>
+        <div style="margin-top:20px; font-size:0.75rem; color:var(--surface1); text-align: center;">Press ESC to close</div>
+    </div>
+
+    <div class="modal" id="command-manager-modal" style="width: 400px;">
+        <h4>+ Command Manager</h4>
+        <div class="modal-section">
+            <div id="cm-list" style="margin-bottom: 20px; max-height: 200px; overflow-y: auto;">
+                <!-- Custom commands listed here -->
+            </div>
+            <div class="modal-section-title">[ ADD NEW ]</div>
+            <div class="modal-row">
+                <span>Prefix</span>
+                <input id="cm-prefix" class="task-input" style="width: 100px; margin-top: 0;" placeholder="!work">
+            </div>
+            <div class="modal-row">
+                <span>Description</span>
+                <input id="cm-desc" class="task-input" style="width: 180px; margin-top: 0;" placeholder="Search Slack">
+            </div>
+            <div class="modal-row">
+                <span>URL</span>
+                <input id="cm-url" class="task-input" style="width: 250px; margin-top: 0;" placeholder="https://app.slack.com/search?q=">
+            </div>
+        </div>
+        <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+            <button id="cm-cancel" class="mini-btn">Cancel</button>
+            <button id="cm-save" class="mini-btn" style="background: var(--mauve); color: var(--text); font-weight: bold;">Save Command</button>
+        </div>
+    </div>
+
+    <div class="modal" id="settings-modal" style="width: 450px; max-height: 85vh; overflow-y: auto;">
+        <h4>/settings</h4>
+        
+        <div class="modal-section">
+            <div class="modal-section-title">[ APPEARANCE ]</div>
+            <div class="modal-row">
+                <span>Theme</span>
+                <select id="setting-theme">
+                    <option value="mocha">Mocha</option>
+                    <option value="frappe">Frappe</option>
+                    <option value="macchiato">Macchiato</option>
+                    <option value="latte">Latte</option>
+                </select>
+            </div>
+            <div class="modal-row">
+                <span>Font Size</span>
+                <select id="setting-font">
+                    <option value="small">Small</option>
+                    <option value="normal">Normal</option>
+                    <option value="large">Large</option>
+                </select>
+            </div>
+            <div class="modal-row">
+                <span>UI Density</span>
+                <select id="setting-density">
+                    <option value="compact">Compact</option>
+                    <option value="normal">Normal</option>
+                    <option value="spaced">Spaced</option>
+                </select>
+            </div>
+            <div class="modal-row">
+                <span>ASCII Hero</span>
+                <label class="switch"><input type="checkbox" id="toggle-ascii"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>Animations</span>
+                <select id="setting-animations">
+                    <option value="on">Smooth</option>
+                    <option value="off">Instant</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="modal-section">
+            <div class="modal-section-title">[ CLOCK & LAYOUT ]</div>
+            <div class="modal-row">
+                <span>Time Format</span>
+                <select id="setting-time-format">
+                    <option value="24h">24-Hour</option>
+                    <option value="12h">12-Hour</option>
+                </select>
+            </div>
+            <div class="modal-row">
+                <span>Alignment</span>
+                <select id="setting-alignment">
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                </select>
+            </div>
+            <div class="modal-row">
+                <span>Seconds</span>
+                <label class="switch"><input type="checkbox" id="toggle-seconds"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>Show Date</span>
+                <label class="switch"><input type="checkbox" id="toggle-date"><span class="slider"></span></label>
+            </div>
+        </div>
+
+        <div class="modal-section">
+            <div class="modal-section-title">[ SEARCH ]</div>
+            <div class="modal-row">
+                <span>Default Engine</span>
+                <select id="setting-engine">
+                    <option value="google">Google</option>
+                    <option value="duckduckgo">DuckDuckGo</option>
+                </select>
+            </div>
+            <div class="modal-row">
+                <span>Suggestions</span>
+                <label class="switch"><input type="checkbox" id="toggle-suggestions"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>Target</span>
+                <select id="setting-target">
+                    <option value="current">Current Tab</option>
+                    <option value="new">New Tab</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="advanced-drawer">
+            <div class="advanced-label" id="toggle-adv-label">
+                <span id="adv-icon">▾</span> /advanced
+            </div>
+            <div class="advanced-content" id="advanced-content">
+                
+                <div class="advanced-section-title">Advanced Config</div>
+                <div style="margin-bottom: 10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Links JSON</span>
+                        <div class="json-tools">
+                            <button class="mini-btn" id="format-links-btn">Format</button>
+                            <button class="mini-btn" id="validate-links-btn">Validate</button>
+                        </div>
+                    </div>
+                    <textarea id="links-editor" style="background: var(--surface0); border: 1px solid var(--surface1); color: var(--subtext0); padding: 8px; margin-top:5px; height: 100px; resize:vertical; width:100%; border-radius:4px; font-size: 0.7rem;"></textarea>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Commands JSON</span>
+                        <div class="json-tools">
+                            <button class="mini-btn" id="format-cmds-btn">Format</button>
+                            <button class="mini-btn" id="validate-cmds-btn">Validate</button>
+                        </div>
+                    </div>
+                    <textarea id="commands-editor" style="background: var(--surface0); border: 1px solid var(--surface1); color: var(--subtext0); padding: 8px; margin-top:5px; height: 100px; resize:vertical; width:100%; border-radius:4px; font-size: 0.7rem;"></textarea>
+                    <button id="save-all-configs-btn" style="width:100%; margin-top:8px; background: var(--mauve); color: var(--text); border: none; padding: 6px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.7rem;">Apply Config Changes</button>
+                </div>
+
+                <div class="advanced-section-title">Data Controls</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
+                    <button id="export-btn" class="mini-btn" style="padding: 6px;">Export Config</button>
+                    <label class="mini-btn" style="padding: 6px; text-align: center; cursor: pointer;">
+                        Import Config <input type="file" id="import-input" style="display: none;" accept=".json">
+                    </label>
+                    <button class="mini-btn reset-btn" data-type="settings">Reset Settings</button>
+                    <button class="mini-btn reset-btn" data-type="tasks">Reset Tasks</button>
+                    <button class="mini-btn reset-btn" data-type="notes">Reset Notes</button>
+                    <button class="mini-btn reset-btn" data-type="ascii">Reset ASCII</button>
+                </div>
+
+                <div class="advanced-section-title">System</div>
+                <div class="modal-row">
+                    <span>Enable Commands</span>
+                    <label class="switch"><input type="checkbox" id="toggle-enable-commands"><span class="slider"></span></label>
+                </div>
+                <div class="modal-row">
+                    <span>shortcuts (Ctrl+K)</span>
+                    <label class="switch"><input type="checkbox" id="toggle-shortcuts"><span class="slider"></span></label>
+                </div>
+                <div class="modal-row">
+                    <span>True Minimalism (@min)</span>
+                    <label class="switch"><input type="checkbox" id="toggle-minimalium"><span class="slider"></span></label>
+                </div>
+                <div class="modal-row">
+                    <span>Focus Mode</span>
+                    <label class="switch"><input type="checkbox" id="toggle-focus"><span class="slider"></span></label>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:20px; text-align: center; color:var(--surface1); opacity: 0.5; font-size: 0.7rem;">Press ESC to close</div>
+    </div>
+
+    <div class="modal" id="widgets-modal" style="width: 400px;">
+        <h4>/widgets</h4>
+        <div class="modal-section">
+            <div class="modal-section-title">[ LAYOUT ]</div>
+            <div class="modal-row">
+                <span>Left Sidebar</span>
+                <label class="switch"><input type="checkbox" id="w-toggle-sidebar"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>Right Sidebar (Aside)</span>
+                <label class="switch"><input type="checkbox" id="w-toggle-widgets"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>ASCII Hero</span>
+                <label class="switch"><input type="checkbox" id="w-toggle-ascii"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row" style="margin-top: 10px; border-top: 1px solid var(--surface0); padding-top: 10px;">
+                <span style="color: var(--mauve); font-weight: bold;">Minimalium Mode</span>
+                <label class="switch"><input type="checkbox" id="toggle-minimalium-2" onchange="document.getElementById('toggle-minimalium').checked = this.checked; updateSettings();"><span class="slider"></span></label>
+            </div>
+        </div>
+        <div class="modal-section">
+            <div class="modal-section-title">[ CONTENT ]</div>
+            <div class="modal-row">
+                <span>Task List</span>
+                <label class="switch"><input type="checkbox" id="w-toggle-tasks"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>Notes / Memo</span>
+                <label class="switch"><input type="checkbox" id="w-toggle-notes"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>Timer / Pomo</span>
+                <label class="switch"><input type="checkbox" id="w-toggle-timer"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>Weather</span>
+                <label class="switch"><input type="checkbox" id="w-toggle-weather"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>Media Player</span>
+                <label class="switch"><input type="checkbox" id="w-toggle-media"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>System Stats</span>
+                <label class="switch"><input type="checkbox" id="w-toggle-system"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>Visualizer</span>
+                <label class="switch"><input type="checkbox" id="w-toggle-visualizer"><span class="slider"></span></label>
+            </div>
+            <div class="modal-row">
+                <span>Background Optm.</span>
+                <label class="switch"><input type="checkbox" id="w-toggle-bg-opt"><span class="slider"></span></label>
+            </div>
+        </div>
+        <div style="margin-top:20px; text-align: center; color:var(--surface1); opacity: 0.5; font-size: 0.7rem;">Press ESC to close</div>
+    </div>
+
+    <div class="modal" id="ascii-modal" style="width: 500px;">
+        <h4>/ascii-editor</h4>
+        
+        <div style="margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <span style="font-size: 0.7rem; color: var(--subtext0); display: block; margin-bottom: 4px;">PRESETS:</span>
+                <button class="preset-btn" data-preset="custom">Custom</button>
+                <button class="preset-btn" data-preset="default">Default</button>
+                <button class="preset-btn" data-preset="tux">Tux</button>
+                <button class="preset-btn" data-preset="earth">Earth</button>
+                <button class="preset-btn" data-preset="minimal">Minimal</button>
+                <button class="preset-btn" data-preset="dragon">Dragon</button>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-size: 0.7rem; color: var(--subtext0); display: block; margin-bottom: 4px;">SIZE:</span>
+                <button class="preset-btn size-btn" data-delta="-1" style="width: 30px;">-</button>
+                <span id="ascii-size-display" style="font-size: 0.8rem; color: var(--mauve); min-width: 40px; display: inline-block; text-align: center;">8px</span>
+                <button class="preset-btn size-btn" data-delta="1" style="width: 30px;">+</button>
+            </div>
+        </div>
+
+        <textarea id="ascii-editor-textarea" spellcheck="false" autocomplete="off"></textarea>
+
+        <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+            <button id="ascii-clear" style="background: var(--surface1); color: var(--red); border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Clear All</button>
+            <button class="ascii-cancel" style="background: var(--surface1); color: var(--text); border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Cancel</button>
+            <button id="ascii-save" style="background: var(--mauve); color: var(--crust); border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Save Hero</button>
+        </div>
+    </div>
+
+    <div class="modal" id="minimalium-modal" style="width: 360px;">
+        <h4>/minimalium</h4>
+        <p style="font-size: 0.75rem; color: var(--subtext0); margin-bottom: 16px;">Select a minimalism mode. Hides sidebars and widgets for a distraction-free experience.</p>
+        <div class="modal-section" style="border-top: none; margin-top: 0; padding-top: 0;">
+            <div class="modal-section-title">[ MODE ]</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="min-mode-btn" data-mode="1" style="width: 100%; padding: 12px; background: var(--surface0); border: 1px solid var(--surface1); color: var(--text); border-radius: 6px; cursor: pointer; text-align: left; font-family: inherit; font-size: 0.8rem; transition: all 0.2s ease;">
+                    <span style="color: var(--mauve); font-weight: bold;">Art + Clock + Search</span><br>
+                    <span style="font-size: 0.7rem; opacity: 0.6;">ASCII art, time, date, and search bar</span>
+                </button>
+                <button class="min-mode-btn" data-mode="2" style="width: 100%; padding: 12px; background: var(--surface0); border: 1px solid var(--surface1); color: var(--text); border-radius: 6px; cursor: pointer; text-align: left; font-family: inherit; font-size: 0.8rem; transition: all 0.2s ease;">
+                    <span style="color: var(--mauve); font-weight: bold;">Art + Search</span><br>
+                    <span style="font-size: 0.7rem; opacity: 0.6;">ASCII art and search bar only</span>
+                </button>
+                <button class="min-mode-btn" data-mode="3" style="width: 100%; padding: 12px; background: var(--surface0); border: 1px solid var(--surface1); color: var(--text); border-radius: 6px; cursor: pointer; text-align: left; font-family: inherit; font-size: 0.8rem; transition: all 0.2s ease;">
+                    <span style="color: var(--mauve); font-weight: bold;">Art Only</span><br>
+                    <span style="font-size: 0.7rem; opacity: 0.6;">Just the ASCII art, nothing else</span>
+                </button>
+            </div>
+        </div>
+        <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+            <button class="min-mode-btn" data-mode="0" style="background: var(--red); color: var(--crust); border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: inherit; font-size: 0.8rem;">Disable</button>
+            <button class="ascii-cancel" style="background: var(--surface1); color: var(--text); border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-family: inherit;">Cancel</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
