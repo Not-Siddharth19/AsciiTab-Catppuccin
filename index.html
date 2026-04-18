@@ -405,27 +405,30 @@
 
     <div class="modal" id="minimalium-modal" style="width: 360px;">
         <h4>/minimalium</h4>
-        <p style="font-size: 0.75rem; color: var(--subtext0); margin-bottom: 16px;">Select a minimalism mode. Hides sidebars and widgets for a distraction-free experience.</p>
+        <p style="font-size: 0.75rem; color: var(--subtext0); margin-bottom: 16px;">Select a mode to hide/show elements.</p>
         <div class="modal-section" style="border-top: none; margin-top: 0; padding-top: 0;">
             <div class="modal-section-title">[ MODE ]</div>
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <button class="min-mode-btn" data-mode="1" style="width: 100%; padding: 12px; background: var(--surface0); border: 1px solid var(--surface1); color: var(--text); border-radius: 6px; cursor: pointer; text-align: left; font-family: inherit; font-size: 0.8rem; transition: all 0.2s ease;">
-                    <span style="color: var(--mauve); font-weight: bold;">Art + Clock + Search</span><br>
-                    <span style="font-size: 0.7rem; opacity: 0.6;">ASCII art, time, date, and search bar</span>
+                <button class="min-mode-btn" data-mode="0" style="width: 100%; padding: 12px; background: var(--surface0); border: 1px solid var(--surface1); color: var(--text); border-radius: 6px; cursor: pointer; text-align: left; font-family: inherit; font-size: 0.8rem;">
+                    <span style="color: var(--mauve); font-weight: bold;">Normal</span><br>
+                    <span style="font-size: 0.7rem; opacity: 0.6;">Show all sidebars + widgets</span>
                 </button>
-                <button class="min-mode-btn" data-mode="2" style="width: 100%; padding: 12px; background: var(--surface0); border: 1px solid var(--surface1); color: var(--text); border-radius: 6px; cursor: pointer; text-align: left; font-family: inherit; font-size: 0.8rem; transition: all 0.2s ease;">
-                    <span style="color: var(--mauve); font-weight: bold;">Art + Search</span><br>
-                    <span style="font-size: 0.7rem; opacity: 0.6;">ASCII art and search bar only</span>
+                <button class="min-mode-btn" data-mode="1" style="width: 100%; padding: 12px; background: var(--surface0); border: 1px solid var(--surface1); color: var(--text); border-radius: 6px; cursor: pointer; text-align: left; font-family: inherit; font-size: 0.8rem;">
+                    <span style="color: var(--mauve); font-weight: bold;">Minimal</span><br>
+                    <span style="font-size: 0.7rem; opacity: 0.6;">Hide both sidebars + clock</span>
                 </button>
-                <button class="min-mode-btn" data-mode="3" style="width: 100%; padding: 12px; background: var(--surface0); border: 1px solid var(--surface1); color: var(--text); border-radius: 6px; cursor: pointer; text-align: left; font-family: inherit; font-size: 0.8rem; transition: all 0.2s ease;">
+                <button class="min-mode-btn" data-mode="2" style="width: 100%; padding: 12px; background: var(--surface0); border: 1px solid var(--surface1); color: var(--text); border-radius: 6px; cursor: pointer; text-align: left; font-family: inherit; font-size: 0.8rem;">
+                    <span style="color: var(--mauve); font-weight: bold;">Clock + Search</span><br>
+                    <span style="font-size: 0.7rem; opacity: 0.6;">Show clock + search</span>
+                </button>
+                <button class="min-mode-btn" data-mode="3" style="width: 100%; padding: 12px; background: var(--surface0); border: 1px solid var(--surface1); color: var(--text); border-radius: 6px; cursor: pointer; text-align: left; font-family: inherit; font-size: 0.8rem;">
                     <span style="color: var(--mauve); font-weight: bold;">Art Only</span><br>
-                    <span style="font-size: 0.7rem; opacity: 0.6;">Just the ASCII art, nothing else</span>
+                    <span style="font-size: 0.7rem; opacity: 0.6;">Just ASCII art</span>
                 </button>
             </div>
         </div>
         <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
-            <button class="min-mode-btn" data-mode="0" style="background: var(--red); color: var(--crust); border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: inherit; font-size: 0.8rem;">Disable</button>
-            <button class="ascii-cancel" style="background: var(--surface1); color: var(--text); border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-family: inherit;">Cancel</button>
+            <button class="ascii-cancel" style="background: var(--surface1); color: var(--text); border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-family: inherit;">Cancel</button>
         </div>
     </div>
 

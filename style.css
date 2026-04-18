@@ -199,41 +199,44 @@ body.focus-mode main { grid-column: 1 / span 3; }
     background: var(--mauve);
 }
 
+/* Base layout */
 body {
     background: var(--base);
     color: var(--text);
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+    display: flex;
     height: 100vh;
     overflow: hidden;
 }
 
-/* SIDEBAR */
+/* Left sidebar */
 nav {
     width: 300px;
+    min-width: 250px;
     padding: 30px;
     border-right: 1px solid var(--surface0);
-    resize: horizontal;
     overflow: auto;
-    min-width: 250px;
-    max-width: 500px;
+    flex-shrink: 0;
 }
 
+/* Main content - centered */
 main {
-    grid-column: 2;
-    grid-row: 1;
-    background: var(--base);
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 18px;
+    text-align: center;
 }
 
+/* Right sidebar */
 aside {
-    grid-column: 3;
-    grid-row: 1;
-    background: var(--base);
+    width: 300px;
+    min-width: 280px;
+    padding: 25px;
+    border-left: 1px solid var(--surface0);
+    overflow-y: auto;
+    flex-shrink: 0;
 }
 
 a, .suggestion, .task-item, button, input, .slider {
@@ -244,18 +247,6 @@ a, .suggestion, .task-item, button, input, .slider {
 #date { font-size: 1.2em; color: var(--subtext0); letter-spacing: 2px; }
 .widget-title { font-size: 0.8em; color: var(--surface1); margin-bottom: 8px; letter-spacing: 1px; }
 .suggestion span { font-size: 0.9em; }
-
-
-/* SIDEBAR */
-nav {
-    width: 300px;
-    padding: 30px;
-    border-right: 1px solid var(--surface0);
-    resize: horizontal;
-    overflow: auto;
-    min-width: 250px;
-    max-width: 500px;
-}
 
 nav h3 {
     font-size: 0.75rem;
@@ -322,6 +313,7 @@ main {
 /* SEARCH */
 .search-container {
     width: 460px;
+    position: relative;
 }
 
 .search-box {
@@ -329,6 +321,7 @@ main {
     border: 1px solid var(--surface1);
     border-radius: 8px;
     padding: 10px 14px;
+    min-width: 460px;
 }
 
 .search-box:focus-within {
@@ -346,11 +339,45 @@ main {
 /* DROPDOWN */
 #suggestions {
     display: none;
+    position: absolute;
+    top: 42px;
+    left: 0;
+    min-width: 460px;
     background: var(--surface0);
     border: 1px solid var(--surface1);
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    margin-top: -2px;
+    border-radius: 8px;
+    z-index: 50;
+    overflow: hidden;
+}
+
+.suggestion {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    color: var(--subtext0);
+    cursor: pointer;
+    direction: ltr;
+    text-align: left;
+}
+
+.suggestion:hover, .suggestion.selected {
+    background: var(--surface1);
+    color: var(--text);
+}
+
+/* RIGHT PANEL */
+
+/* RIGHT PANEL */
+
+.suggestion {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    color: var(--subtext0);
+    cursor: pointer;
+}
+
+.search-box {
+    position: relative;
+    width: 460px;
 }
 
 .suggestion {

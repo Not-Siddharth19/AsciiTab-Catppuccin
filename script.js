@@ -738,6 +738,11 @@ setInterval(() => {
 }, 3000);
 
 function loadSettings() {
+    // Always use default minimalism mode
+    currentSettings.minimalismMode = 0;
+    currentSettings.sidebar = true;
+    currentSettings.widgets = true;
+    
     document.getElementById('setting-theme').value = currentSettings.theme;
     document.getElementById('setting-font').value = currentSettings.font;
     document.getElementById('setting-density').value = currentSettings.density || 'normal';
@@ -766,9 +771,7 @@ function loadSettings() {
     document.getElementById('toggle-enable-commands').checked = currentSettings.enableCommands !== false;
     document.getElementById('toggle-shortcuts').checked = currentSettings.shortcuts !== false;
     document.getElementById('toggle-focus').checked = currentSettings.focusMode === true;
-    const minToggle = document.getElementById('toggle-minimalium');
-    if (minToggle) minToggle.checked = currentSettings.minimalismMode > 0;
-
+    
     applySettings();
 }
 
@@ -833,50 +836,66 @@ window.resetSettings = function() {
 function applySettings() {
     document.body.className = `theme-${currentSettings.theme} font-${currentSettings.font} density-${currentSettings.density} align-${currentSettings.alignment}`;
     if (currentSettings.focusMode) document.body.classList.add('focus-mode');
-    const minMode = currentSettings.minimalismMode || 0;
-    if (minMode > 0) document.body.classList.add('minimalium-active');
-
+    
     document.documentElement.style.setProperty('--transition-speed', currentSettings.animations === 'on' ? '0.2s' : '0s');
     document.documentElement.style.setProperty('--ascii-size', (currentSettings.asciiSize || 8) + 'px');
 
-    // ASCII visibility - default to true
-    const asciiEl = document.getElementById('ascii-art');
-    document.getElementById('left-nav').style.display = currentSettings.sidebar ? 'block' : 'none';
-    document.getElementById('right-aside').style.display = currentSettings.widgets ? 'block' : 'none';
+    const minMode = currentSettings.minimalismMode || 0;
     
-    if (asciiEl) {
-        // Default to showing if setting not set
-        const showAscii = currentSettings.ascii === undefined ? true : currentSettings.ascii;
-        asciiEl.style.display = showAscii ? 'block' : 'none';
-    }
-
+    // Get elements
+    const leftNav = document.getElementById('left-nav');
+    const rightAside = document.getElementById('right-aside');
     const clockEl = document.getElementById('clock');
     const dateEl = document.getElementById('date');
     const searchContainer = document.querySelector('.search-container');
-    if (searchContainer) searchContainer.style.display = '';
-    const artEl = document.getElementById('ascii-art');
-    if (artEl) artEl.style.cursor = '';
-
-    document.getElementById('tasks-widget').style.display = currentSettings.showTasks ? 'block' : 'none';
-    document.getElementById('notes-widget').style.display = currentSettings.showNotes ? 'block' : 'none';
-    document.getElementById('timer-widget').style.display = currentSettings.showTimer ? 'block' : 'none';
-    document.getElementById('weather-widget').style.display = currentSettings.showWeather ? 'block' : 'none';
-    document.getElementById('media-widget').style.display = currentSettings.showMedia ? 'block' : 'none';
-    document.getElementById('system-widget').style.display = currentSettings.showSystem ? 'block' : 'none';
-    document.getElementById('visualizer-widget').style.display = currentSettings.showVisualizer ? 'block' : 'none';
-    if (currentSettings.showVisualizer) initVisualizer();
-
-    // Highlight active mode button
-    document.querySelectorAll('.min-mode-btn').forEach(btn => {
-        const mode = parseInt(btn.dataset.mode);
-        if (mode === minMode && mode > 0) {
-            btn.style.borderColor = 'var(--mauve)';
-            btn.style.background = 'var(--surface1)';
-        } else if (mode > 0) {
-            btn.style.borderColor = 'var(--surface1)';
-            btn.style.background = 'var(--surface0)';
-        }
-    });
+    const asciiEl = document.getElementById('ascii-art');
+    
+    // Set visibility based on mode
+    if (minMode === 0) {
+        // Normal - show all
+        if (leftNav) leftNav.style.display = 'block';
+        if (rightAside) rightAside.style.display = 'block';
+        if (clockEl) clockEl.style.display = '';
+        if (dateEl) dateEl.style.display = '';
+        if (searchContainer) searchContainer.style.display = '';
+        if (asciiEl) asciiEl.style.display = 'block';
+    } else if (minMode === 1) {
+        // Minimal - hide both sidebars + clock
+        if (leftNav) leftNav.style.display = 'none';
+        if (rightAside) rightAside.style.display = 'none';
+        if (clockEl) clockEl.style.display = 'none';
+        if (dateEl) dateEl.style.display = 'none';
+        if (searchContainer) searchContainer.style.display = '';
+        if (asciiEl) asciiEl.style.display = 'block';
+    } else if (minMode === 2) {
+        // Clock + Search - hide both sidebars
+        if (leftNav) leftNav.style.display = 'none';
+        if (rightAside) rightAside.style.display = 'none';
+        if (clockEl) clockEl.style.display = '';
+        if (dateEl) dateEl.style.display = '';
+        if (searchContainer) searchContainer.style.display = '';
+        if (asciiEl) asciiEl.style.display = 'block';
+    } else if (minMode === 3) {
+        // Art Only - hide everything
+        if (leftNav) leftNav.style.display = 'none';
+        if (rightAside) rightAside.style.display = 'none';
+        if (clockEl) clockEl.style.display = 'none';
+        if (dateEl) dateEl.style.display = 'none';
+        if (searchContainer) searchContainer.style.display = 'none';
+        if (asciiEl) asciiEl.style.display = 'block';
+    }
+    
+    // Show/hide widgets based on right sidebar visibility
+    const showWidgets = rightAside && rightAside.style.display !== 'none';
+    document.getElementById('tasks-widget').style.display = showWidgets && currentSettings.showTasks !== false ? 'block' : 'none';
+    document.getElementById('notes-widget').style.display = showWidgets && currentSettings.showNotes !== false ? 'block' : 'none';
+    document.getElementById('timer-widget').style.display = showWidgets && currentSettings.showTimer !== false ? 'block' : 'none';
+    document.getElementById('weather-widget').style.display = showWidgets && currentSettings.showWeather !== false ? 'block' : 'none';
+    document.getElementById('media-widget').style.display = showWidgets && currentSettings.showMedia !== false ? 'block' : 'none';
+    document.getElementById('system-widget').style.display = showWidgets && currentSettings.showSystem !== false ? 'block' : 'none';
+    document.getElementById('visualizer-widget').style.display = showWidgets && currentSettings.showVisualizer !== false ? 'block' : 'none';
+    
+    if (currentSettings.showVisualizer && showWidgets) initVisualizer();
 }
 
 function resetSpecific(type) {
