@@ -31,10 +31,23 @@ A keyboard-centric browser startpage with ASCII aesthetics and Catppuccin themin
 
 ## Installation
 
+### Firefox (Recommended)
+Install the official Firefox add-on for easiest setup:
+
+**[AsciiTab Firefox Add-on](https://addons.mozilla.org/en-US/firefox/addon/asciitab/)**
+
+### Firefox (Manual)
+1. Open `about:config`
+2. Set `browser.startup.homepage` to `file:///path/to/index.html`
+3. Or use [Firefox Portrait](https://addons.mozilla.org/en-US/firefox/addon/firefox-portrait/) to set custom homepage
+
+### Chrome / Chromium
 1. Download or clone this repository
-2. Set as browser home page:
-   - **Chrome**: Settings → On startup → Open a specific page → Set to `index.html`
-   - **Firefox**: Settings → Home → Homepage and new windows → Custom URLs → file://path/to/index.html
+2. Go to Settings → On startup → Open a specific page
+3. Set to `index.html` (use file path)
+
+### Browser Extension (All Browsers)
+Use a startpage extension like [New Tab Redirect](https://chrome.google.com/webstore/detail/new-tab-redirect/) to load the startpage.
 
 ## Tech Stack
 

@@ -310,44 +310,75 @@ main {
     letter-spacing: 2px;
 }
 
-/* SEARCH */
+/* SEARCH AREA */
 .search-container {
     width: 460px;
     position: relative;
+    margin: 0 auto;
 }
 
 .search-box {
+    width: 460px;
+    display: block;
     background: var(--surface0);
     border: 1px solid var(--surface1);
     border-radius: 8px;
     padding: 10px 14px;
-    min-width: 460px;
-}
-
-.search-box:focus-within {
-    border-color: var(--mauve);
+    box-sizing: border-box;
 }
 
 #cmd {
     width: 100%;
-    background: none;
+    background: transparent;
     border: none;
     color: var(--text);
     outline: none;
+    font-size: 1rem;
 }
 
 /* DROPDOWN */
 #suggestions {
     display: none;
     position: absolute;
-    top: 42px;
+    top: 100%;
     left: 0;
-    min-width: 460px;
+    width: 100%;
+    max-width: 460px;
+    margin-top: -2px;
+    padding: 0;
     background: var(--surface0);
     border: 1px solid var(--surface1);
-    border-radius: 8px;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.suggestion {
+    display: block;
+    padding: 12px 14px;
+    color: var(--subtext0);
+    cursor: pointer;
+    text-align: left;
+    unicode-bidi: plaintext;
+}
+
+.suggestion:hover {
+    background: var(--surface1);
+    color: var(--text);
+}
+
+/* RIGHT PANEL */
+aside {
+    width: 100%;
+    max-width: 460px;
+    background: var(--surface0);
+    border: 1px solid var(--surface1);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
     z-index: 50;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .suggestion {
@@ -357,6 +388,7 @@ main {
     cursor: pointer;
     direction: ltr;
     text-align: left;
+    unicode-bidi: plaintext;
 }
 
 .suggestion:hover, .suggestion.selected {
@@ -375,17 +407,7 @@ main {
     cursor: pointer;
 }
 
-.search-box {
-    position: relative;
-    width: 460px;
-}
-
-.suggestion {
-    padding: 8px 10px;
-    font-size: 0.8rem;
-    color: var(--subtext0);
-    cursor: pointer;
-}
+/* RIGHT PANEL */
 
 .suggestion:hover, .suggestion.selected {
     background: var(--surface1);

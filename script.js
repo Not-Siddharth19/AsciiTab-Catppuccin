@@ -738,39 +738,54 @@ setInterval(() => {
 }, 3000);
 
 function loadSettings() {
-    // Always use default minimalism mode
+    // Basic settings check
+    if (!currentSettings || typeof currentSettings !== 'object') {
+        currentSettings = Object.assign({}, defaultSettings);
+    }
+
+    // Always use default minimalism mode initially to avoid getting stuck
     currentSettings.minimalismMode = 0;
     currentSettings.sidebar = true;
     currentSettings.widgets = true;
     
-    document.getElementById('setting-theme').value = currentSettings.theme;
-    document.getElementById('setting-font').value = currentSettings.font;
-    document.getElementById('setting-density').value = currentSettings.density || 'normal';
-    document.getElementById('toggle-ascii').checked = currentSettings.ascii;
-    document.getElementById('setting-animations').value = currentSettings.animations || 'on';
-    document.getElementById('setting-time-format').value = currentSettings.clock24h ? '24h' : '12h';
-    document.getElementById('setting-alignment').value = currentSettings.alignment || 'center';
-    document.getElementById('toggle-seconds').checked = currentSettings.clockSeconds;
-    document.getElementById('toggle-date').checked = currentSettings.clockDate;
-    document.getElementById('setting-engine').value = currentSettings.engine;
-    document.getElementById('toggle-suggestions').checked = currentSettings.suggestions;
-    document.getElementById('setting-target').value = currentSettings.newtab ? 'new' : 'current';
+    // Safety check for UI elements
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+    };
+    const setChecked = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.checked = val;
+    };
 
-    document.getElementById('w-toggle-sidebar').checked = currentSettings.sidebar;
-    document.getElementById('w-toggle-widgets').checked = currentSettings.widgets;
-    document.getElementById('w-toggle-ascii').checked = currentSettings.ascii;
-    document.getElementById('w-toggle-tasks').checked = currentSettings.showTasks !== false;
-    document.getElementById('w-toggle-notes').checked = currentSettings.showNotes !== false;
-    document.getElementById('w-toggle-timer').checked = currentSettings.showTimer !== false;
-    document.getElementById('w-toggle-weather').checked = currentSettings.showWeather !== false;
-    document.getElementById('w-toggle-media').checked = currentSettings.showMedia !== false;
-    document.getElementById('w-toggle-system').checked = currentSettings.showSystem !== false;
-    document.getElementById('w-toggle-visualizer').checked = currentSettings.showVisualizer !== false;
-    document.getElementById('w-toggle-bg-opt').checked = currentSettings.backgroundOptimization !== false;
+    setVal('setting-theme', currentSettings.theme);
+    setVal('setting-font', currentSettings.font);
+    setVal('setting-density', currentSettings.density || 'normal');
+    setChecked('toggle-ascii', currentSettings.ascii);
+    setVal('setting-animations', currentSettings.animations || 'on');
+    setVal('setting-time-format', currentSettings.clock24h ? '24h' : '12h');
+    setVal('setting-alignment', currentSettings.alignment || 'center');
+    setChecked('toggle-seconds', currentSettings.clockSeconds);
+    setChecked('toggle-date', currentSettings.clockDate);
+    setVal('setting-engine', currentSettings.engine);
+    setChecked('toggle-suggestions', currentSettings.suggestions);
+    setVal('setting-target', currentSettings.newtab ? 'new' : 'current');
 
-    document.getElementById('toggle-enable-commands').checked = currentSettings.enableCommands !== false;
-    document.getElementById('toggle-shortcuts').checked = currentSettings.shortcuts !== false;
-    document.getElementById('toggle-focus').checked = currentSettings.focusMode === true;
+    setChecked('w-toggle-sidebar', currentSettings.sidebar);
+    setChecked('w-toggle-widgets', currentSettings.widgets);
+    setChecked('w-toggle-ascii', currentSettings.ascii);
+    setChecked('w-toggle-tasks', currentSettings.showTasks !== false);
+    setChecked('w-toggle-notes', currentSettings.showNotes !== false);
+    setChecked('w-toggle-timer', currentSettings.showTimer !== false);
+    setChecked('w-toggle-weather', currentSettings.showWeather !== false);
+    setChecked('w-toggle-media', currentSettings.showMedia !== false);
+    setChecked('w-toggle-system', currentSettings.showSystem !== false);
+    setChecked('w-toggle-visualizer', currentSettings.showVisualizer !== false);
+    setChecked('w-toggle-bg-opt', currentSettings.backgroundOptimization !== false);
+
+    setChecked('toggle-enable-commands', currentSettings.enableCommands !== false);
+    setChecked('toggle-shortcuts', currentSettings.shortcuts !== false);
+    setChecked('toggle-focus', currentSettings.focusMode === true);
     
     applySettings();
 }
@@ -834,8 +849,17 @@ window.resetSettings = function() {
 }
 
 function applySettings() {
-    document.body.className = `theme-${currentSettings.theme} font-${currentSettings.font} density-${currentSettings.density} align-${currentSettings.alignment}`;
-    if (currentSettings.focusMode) document.body.classList.add('focus-mode');
+    // Base classes
+    const baseClasses = [
+        `theme-${currentSettings.theme}`,
+        `font-${currentSettings.font}`,
+        `density-${currentSettings.density}`,
+        `align-${currentSettings.alignment}`
+    ];
+    if (currentSettings.focusMode) baseClasses.push('focus-mode');
+    if (currentSettings.minimalismMode > 0) baseClasses.push('minimalium-active');
+    
+    document.body.className = baseClasses.join(' ');
     
     document.documentElement.style.setProperty('--transition-speed', currentSettings.animations === 'on' ? '0.2s' : '0s');
     document.documentElement.style.setProperty('--ascii-size', (currentSettings.asciiSize || 8) + 'px');
@@ -851,49 +875,56 @@ function applySettings() {
     const asciiEl = document.getElementById('ascii-art');
     
     // Set visibility based on mode
+    const setDisplay = (el, type) => { if (el) el.style.display = type; };
+
     if (minMode === 0) {
         // Normal - show all
-        if (leftNav) leftNav.style.display = 'block';
-        if (rightAside) rightAside.style.display = 'block';
-        if (clockEl) clockEl.style.display = '';
-        if (dateEl) dateEl.style.display = '';
-        if (searchContainer) searchContainer.style.display = '';
-        if (asciiEl) asciiEl.style.display = 'block';
+        setDisplay(leftNav, 'block');
+        setDisplay(rightAside, 'block');
+        setDisplay(clockEl, '');
+        setDisplay(dateEl, '');
+        setDisplay(searchContainer, '');
+        setDisplay(asciiEl, 'block');
     } else if (minMode === 1) {
         // Minimal - hide both sidebars + clock
-        if (leftNav) leftNav.style.display = 'none';
-        if (rightAside) rightAside.style.display = 'none';
-        if (clockEl) clockEl.style.display = 'none';
-        if (dateEl) dateEl.style.display = 'none';
-        if (searchContainer) searchContainer.style.display = '';
-        if (asciiEl) asciiEl.style.display = 'block';
+        setDisplay(leftNav, 'none');
+        setDisplay(rightAside, 'none');
+        setDisplay(clockEl, 'none');
+        setDisplay(dateEl, 'none');
+        setDisplay(searchContainer, '');
+        setDisplay(asciiEl, 'block');
     } else if (minMode === 2) {
         // Clock + Search - hide both sidebars
-        if (leftNav) leftNav.style.display = 'none';
-        if (rightAside) rightAside.style.display = 'none';
-        if (clockEl) clockEl.style.display = '';
-        if (dateEl) dateEl.style.display = '';
-        if (searchContainer) searchContainer.style.display = '';
-        if (asciiEl) asciiEl.style.display = 'block';
+        setDisplay(leftNav, 'none');
+        setDisplay(rightAside, 'none');
+        setDisplay(clockEl, '');
+        setDisplay(dateEl, '');
+        setDisplay(searchContainer, '');
+        setDisplay(asciiEl, 'block');
     } else if (minMode === 3) {
         // Art Only - hide everything
-        if (leftNav) leftNav.style.display = 'none';
-        if (rightAside) rightAside.style.display = 'none';
-        if (clockEl) clockEl.style.display = 'none';
-        if (dateEl) dateEl.style.display = 'none';
-        if (searchContainer) searchContainer.style.display = 'none';
-        if (asciiEl) asciiEl.style.display = 'block';
+        setDisplay(leftNav, 'none');
+        setDisplay(rightAside, 'none');
+        setDisplay(clockEl, 'none');
+        setDisplay(dateEl, 'none');
+        setDisplay(searchContainer, 'none');
+        setDisplay(asciiEl, 'block');
     }
     
     // Show/hide widgets based on right sidebar visibility
     const showWidgets = rightAside && rightAside.style.display !== 'none';
-    document.getElementById('tasks-widget').style.display = showWidgets && currentSettings.showTasks !== false ? 'block' : 'none';
-    document.getElementById('notes-widget').style.display = showWidgets && currentSettings.showNotes !== false ? 'block' : 'none';
-    document.getElementById('timer-widget').style.display = showWidgets && currentSettings.showTimer !== false ? 'block' : 'none';
-    document.getElementById('weather-widget').style.display = showWidgets && currentSettings.showWeather !== false ? 'block' : 'none';
-    document.getElementById('media-widget').style.display = showWidgets && currentSettings.showMedia !== false ? 'block' : 'none';
-    document.getElementById('system-widget').style.display = showWidgets && currentSettings.showSystem !== false ? 'block' : 'none';
-    document.getElementById('visualizer-widget').style.display = showWidgets && currentSettings.showVisualizer !== false ? 'block' : 'none';
+    const setWidgetDisplay = (id, condition) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = (showWidgets && condition) ? 'block' : 'none';
+    };
+
+    setWidgetDisplay('tasks-widget', currentSettings.showTasks !== false);
+    setWidgetDisplay('notes-widget', currentSettings.showNotes !== false);
+    setWidgetDisplay('timer-widget', currentSettings.showTimer !== false);
+    setWidgetDisplay('weather-widget', currentSettings.showWeather !== false);
+    setWidgetDisplay('media-widget', currentSettings.showMedia !== false);
+    setWidgetDisplay('system-widget', currentSettings.showSystem !== false);
+    setWidgetDisplay('visualizer-widget', currentSettings.showVisualizer !== false);
     
     if (currentSettings.showVisualizer && showWidgets) initVisualizer();
 }
@@ -1253,6 +1284,14 @@ function initEventListeners() {
     });
 
     // Widgets Modal
+    const minToggle2 = document.getElementById('toggle-minimalium-2');
+    if (minToggle2) {
+        minToggle2.addEventListener('change', function() {
+            const minToggle = document.getElementById('toggle-minimalium');
+            if (minToggle) minToggle.checked = this.checked;
+        });
+    }
+    
     const widgetToggles = ['w-toggle-sidebar', 'w-toggle-widgets', 'w-toggle-ascii', 'w-toggle-tasks', 'w-toggle-notes', 'w-toggle-timer', 'w-toggle-weather', 'w-toggle-media', 'w-toggle-system', 'w-toggle-visualizer', 'w-toggle-bg-opt'];
     widgetToggles.forEach(id => {
         const el = document.getElementById(id);
