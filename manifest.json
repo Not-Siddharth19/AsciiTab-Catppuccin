@@ -4,9 +4,8 @@
   "version": "1.0.0",
   "description": "A keyboard-centric browser startpage with ASCII aesthetics and Catppuccin theming",
   "icons": {
-    "48": "icon48.png",
-    "96": "icon96.png",
-    "128": "icon128.png"
+    "48": "AsciiTab.png",
+    "128": "AsciiTab.png"
   },
   "chrome_url_overrides": {
     "newtab": "index.html"
